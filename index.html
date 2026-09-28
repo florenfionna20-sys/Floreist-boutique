@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floreist — Butik Bunga Cantik & Penuh Makna</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sacramento&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7',
+                        'cream-dark': '#F5EFE6',
+                        blush: '#FAF0EE',
+                        'blush-accent': '#F2D3CE',
+                        sage: '#A2B29F',
+                        'sage-dark': '#738370',
+                        'sage-light': '#E8EFE7',
+                        'dusty-rose': '#D88A8A',
+                        'dusty-rose-dark': '#B86B6B',
+                        'lavender-soft': '#EDE7F6',
+                        'lavender-accent': '#9B84AA',
+                        'warm-yellow': '#FCF4DD',
+                        'warm-gold': '#D9A05B'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        script: ['"Sacramento"', 'cursive'],
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 30px -10px rgba(184, 107, 107, 0.12)',
+                        'floating': '0 20px 40px -15px rgba(138, 154, 134, 0.25)',
+                        'glow': '0 0 25px rgba(242, 211, 206, 0.6)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+        
+        @keyframes sway {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.05); }
+        }
+
+        @keyframes flyToCart {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: translate(var(--dx-mid), var(--dy-mid)) scale(1.2) rotate(180deg); opacity: 0.8; }
+            100% { transform: translate(var(--dx-end), var(--dy-end)) scale(0.1) rotate(360deg); opacity: 0; }
+        }
+
+        .animate-float-slow {
+            animation: floatSlow 6s ease-in-out infinite;
+        }
+
+        .animate-sway {
+            animation: sway 4s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+
+        .animate-pulse-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        /* Custom scrollbar for boutique elegance */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDFBF7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E2D5E8;
+            border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D88A8A;
+        }
+
+        /* Flying particle container */
+        .particle-fly {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.8s ease;
+        }
+    </style>
+</head>
+<body class="bg-cream text-gray-800 font-sans selection:bg-blush-accent selection:text-dusty-rose-dark relative overflow-x-hidden min-h-screen">
+
+    <canvas id="petalCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-60"></canvas>
+
+    <div id="toastNotification" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-white/95 backdrop-blur-md border border-blush-accent px-6 py-3 rounded-full shadow-floating flex items-center gap-3 transform -translate-y-20 opacity-0 transition-all duration-500">
+        <span class="text-xl text-dusty-rose">🌸</span>
+        <span id="toastMessage" class="text-sm font-medium text-gray-700">Berhasil ditambahkan ke buketmu ♡</span>
+    </div>
+
+    <header class="sticky top-0 z-40 bg-cream/90 backdrop-blur-md border-b border-blush-accent/40 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="w-10 h-10 rounded-full bg-blush flex items-center justify-center border border-blush-accent group-hover:scale-105 transition-transform overflow-hidden">
+                    <img src="https://i.pinimg.com/originals/07/a7/36/07a7365251c655a2ae7c54b3a7e73282.jpg" alt="Floreist Logo" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <span class="font-serif text-2xl sm:text-3xl font-bold tracking-wide text-gray-800 group-hover:text-dusty-rose transition-colors">Floreist</span>
+                    <span class="block text-[10px] tracking-widest uppercase text-sage-dark font-sans -mt-1">Butik Bunga Penuh Makna</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links in Indonesian -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
+                <a href="#collection" class="hover:text-dusty-rose transition-colors flex items-center gap-1">
+                    <span>Koleksi Bunga</span>
+                </a>
+                <a href="#builder" class="hover:text-dusty-rose transition-colors flex items-center gap-1">
+                    <span>Rangkai Buket</span>
+                    <span class="px-2 py-0.5 text-[10px] bg-warm-yellow text-warm-gold font-bold rounded-full">Kreasikan</span>
+                </a>
+                <a href="#meanings" class="hover:text-dusty-rose transition-colors">Makna Bunga</a>
+                <a href="#feelings" class="hover:text-dusty-rose transition-colors">Ungkapkan Perasaan</a>
+                <a href="#about" class="hover:text-dusty-rose transition-colors">Cerita Kami</a>
+            </nav>
+
+            <!-- Action Buttons & Cart Trigger -->
+            <div class="flex items-center gap-4">
+                <button id="cartBtn" onclick="toggleCartDrawer(true)" class="relative p-3 rounded-full bg-blush border border-blush-accent text-dusty-rose-dark hover:bg-dusty-rose hover:text-white transition-all shadow-sm group">
+                    <i class="fa-solid font-bold text-lg fa-basket-shopping"></i>
+                    <span id="cartBadge" class="absolute -top-1 -right-1 bg-dusty-rose text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center scale-0 transition-transform shadow-md">0</span>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileNav()" class="md:hidden p-2 text-gray-600 hover:text-dusty-rose">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobileNav" class="hidden md:hidden bg-white/95 border-b border-blush-accent px-6 py-4 flex-col gap-3 text-sm">
+            <a href="#collection" onclick="toggleMobileNav()" class="py-2 border-b border-gray-100 text-gray-700">Koleksi Bunga</a>
+            <a href="#builder" onclick="toggleMobileNav()" class="py-2 border-b border-gray-100 text-gray-700">Rangkai Buket ✨</a>
+            <a href="#meanings" onclick="toggleMobileNav()" class="py-2 border-b border-gray-100 text-gray-700">Makna Bunga</a>
+            <a href="#feelings" onclick="toggleMobileNav()" class="py-2 border-b border-gray-100 text-gray-700">Ungkapkan Perasaan</a>
+            <a href="#about" onclick="toggleMobileNav()" class="py-2 text-gray-700">Cerita Kami</a>
+        </div>
+    </header>
+
+    <main class="relative z-10">
+
+        <section class="relative pt-8 pb-16 md:py-24 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Hero Left Content -->
+                <div class="lg:col-span-7 text-center lg:text-left space-y-6">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blush border border-blush-accent text-dusty-rose-dark text-xs sm:text-sm font-medium animate-pulse-glow">
+                        <span>✨ Butik bunga mungil untuk setiap perasaan tulusmu</span>
+                    </div>
+
+                    <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 leading-[1.15]">
+                        Bunga Menyampaikan Apa Yang <br class="hidden sm:inline"/>
+                        <span class="italic text-dusty-rose font-serif font-normal">Kadang Tak Terucap.</span>
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto lg:mx-0 font-light leading-relaxed">
+                        Pilih bunga cantik pilihanmu, temukan makna tersembunyi di baliknya, dan biarkan setiap kelopaknya menyampaikan cerita indah untuk orang tersayang.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                        <a href="#collection" class="w-full sm:w-auto px-8 py-4 rounded-full bg-dusty-rose text-white font-medium hover:bg-dusty-rose-dark transition-all shadow-lg hover:shadow-floating hover:-translate-y-0.5 text-center flex items-center justify-center gap-2 group">
+                            <span>Jelajahi Bunga</span>
+                            <span class="group-hover:translate-x-1 transition-transform">🌸</span>
+                        </a>
+
+                        <a href="#builder" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-gray-700 border border-sage/40 hover:border-sage hover:bg-sage-light/50 transition-all font-medium text-center flex items-center justify-center gap-2">
+                            <span>Rangkai Buket</span>
+                            <i class="fa-solid fa-wand-magic-sparkles text-sage-dark text-sm"></i>
+                        </a>
+                    </div>
+
+                    <!-- Mascot Interactive Tooltip Widget -->
+                    <div class="pt-6 flex items-center justify-center lg:justify-start gap-3">
+                        <div onclick="triggerMascotDialogue()" class="cursor-pointer flex items-center gap-3 bg-white/80 border border-blush-accent p-3 rounded-2xl shadow-soft hover:shadow-md transition-all group">
+                            <div class="w-12 h-12 rounded-full bg-warm-yellow flex items-center justify-center text-2xl relative border border-warm-gold/30 overflow-hidden">
+                                <span class="animate-sway inline-block">🧚‍♀️</span>
+                                <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-dusty-rose opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-3 w-3 bg-dusty-rose"></span>
+                                </span>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-xs font-bold text-gray-800 group-hover:text-dusty-rose transition-colors flex items-center gap-1">
+                                    Flore Si Peri Bunga
+                                    <i class="fa-solid fa-comment-dots text-sage-dark text-[10px]"></i>
+                                </p>
+                                <p id="mascotMessage" class="text-xs text-gray-500 italic">"Klik aku untuk tips bahasa bunga hari ini!"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Right Illustration Frame with Image -->
+                <div class="lg:col-span-5 relative flex justify-center">
+                    <!-- Glow background -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-blush via-lavender-soft to-warm-yellow rounded-full filter blur-3xl opacity-70 -z-10 animate-pulse-glow"></div>
+                    
+                    <div id="heroFlowerCard" class="relative group cursor-pointer p-4 sm:p-5 bg-white/80 backdrop-blur-md rounded-3xl border border-white/80 shadow-floating hover:shadow-glow transition-all duration-500">
+                        <div class="w-64 h-72 sm:w-80 sm:h-96 mx-auto rounded-2xl overflow-hidden shadow-sm relative">
+                            <img id="heroFlowerImg" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1nFNJS1-8PYCMhbX2PNe6EqGH4QKcJ6gr2BpI2QyeDQ&s=10" alt="Floreist Signature Arrangement" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onerror="this.src='https://placehold.co/600x800/FAF0EE/D88A8A?text=Floreist+Bouquet'"/>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 right-4 text-white text-center">
+                                <span class="px-3 py-1 rounded-full bg-white/30 backdrop-blur-md text-xs font-medium uppercase tracking-wider text-white">Rangkaian Khas Floreist</span>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <p class="font-serif italic text-lg text-gray-800">"Keindahan yang Berbicara dari Hati"</p>
+                            <p class="text-xs text-sage-dark font-medium uppercase tracking-widest mt-1"> ✨</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="feelings" class="py-16 bg-gradient-to-b from-transparent via-blush/40 to-transparent border-y border-blush-accent/30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <span class="text-xs font-bold tracking-widest uppercase text-dusty-rose">Rekomendasi Berdasarkan Perasaan</span>
+                <h2 class="font-serif text-3xl sm:text-5xl font-bold text-gray-900 mt-2 mb-4">Apa Yang Ingin Kamu Sampaikan?</h2>
+                <p class="text-gray-600 max-w-xl mx-auto text-sm sm:text-base font-light mb-10">
+                    Pilih perasaan yang ada di hatimu saat ini, dan kami akan merekomendasikan bunga terbaik untuk menyampaikannya.
+                </p>
+
+                <!-- Emotion Chips Grid -->
+                <div class="flex flex-wrap items-center justify-center gap-3 max-w-4xl mx-auto mb-10" id="emotionChips">
+                    <!-- Dynamic rendering via JS -->
+                </div>
+
+                <!-- Recommended Flower Card Output -->
+                <div id="emotionResultBox" class="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-3xl border border-blush-accent shadow-soft transition-all duration-500 transform hidden">
+                    <div class="flex flex-col sm:flex-row items-center gap-6 text-left">
+                        <div class="w-28 h-28 rounded-2xl overflow-hidden shrink-0 border border-blush-accent shadow-sm">
+                            <img id="emotionResultIcon" src="" alt="Bunga Rekomendasi" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/300x300/FAF0EE/D88A8A?text=Bunga'"/>
+                        </div>
+                        <div class="space-y-2 flex-1">
+                            <span id="emotionResultTag" class="text-xs font-bold tracking-wider text-dusty-rose uppercase">Rekomendasi Sesuai Perasaan</span>
+                            <h3 id="emotionResultTitle" class="font-serif text-2xl font-bold text-gray-900">Tulip & Cherry Blossom</h3>
+                            <p id="emotionResultDesc" class="text-sm text-gray-600 font-light leading-relaxed">
+                                "Cinta sempurna & kasih sayang tulus. Berikan saat ingin membuat hari biasa terasa lebih hangat."
+                            </p>
+                            <div class="pt-2 flex items-center justify-between">
+                                <span id="emotionResultPrice" class="font-serif text-xl font-bold text-gray-800">Rp 220.000</span>
+                                <button id="emotionAddBtn" onclick="" class="px-5 py-2.5 rounded-full bg-dusty-rose text-white text-xs font-medium hover:bg-dusty-rose-dark transition-colors shadow-sm">
+                                    Pilih Bunga Ini ♡
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="collection" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center space-y-3 mb-12">
+                <span class="text-xs font-bold tracking-widest uppercase text-sage-dark">Galeri Bunga Segar</span>
+                <h2 class="font-serif text-4xl sm:text-5xl font-bold text-gray-900">Pilih Bungamu 🌷</h2>
+                <p class="text-gray-600 max-w-lg mx-auto text-sm sm:text-base font-light">
+                    Setiap bunga dipetik dengan teliti dan membawa makna puitis yang indah.
+                </p>
+            </div>
+
+            <!-- Product Cards Grid -->
+            <div id="flowerGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                <!-- Javascript will inject floral cards with images here -->
+            </div>
+        </section>
+
+        <section id="builder" class="py-20 bg-cream-dark/60 border-y border-blush-accent/40 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center space-y-3 mb-12">
+                    <span class="text-xs font-bold tracking-widest uppercase text-dusty-rose">Rangkaian Khusus</span>
+                    <h2 class="font-serif text-4xl sm:text-5xl font-bold text-gray-900">Rangkai Buket Kecilmu ✨</h2>
+                    <p class="text-gray-600 max-w-xl mx-auto text-sm sm:text-base font-light">
+                        Pilih beberapa tangkai bunga favoritmu dan kombinasikan menjadi satu buket personal yang indah.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                    
+                    <!-- Stem Selection Tools -->
+                    <div class="lg:col-span-5 bg-white p-6 sm:p-8 rounded-3xl border border-blush-accent shadow-soft space-y-6">
+                        <h3 class="font-serif text-2xl font-bold text-gray-800 border-b border-gray-100 pb-3">Pilih Tangkai Bunga</h3>
+                        
+                        <div id="builderFlowerPicker" class="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-1">
+                            <!-- Injected JS Buttons with Image Thumbnails -->
+                        </div>
+
+                        <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs text-gray-500 block">Total Harga Buket</span>
+                                <span id="builderTotalPrice" class="font-serif text-2xl font-bold text-gray-900">Rp 0</span>
+                            </div>
+                            <button onclick="clearCustomBouquet()" class="text-xs text-gray-400 hover:text-dusty-rose underline">Reset Rangkaian</button>
+                        </div>
+                    </div>
+
+                    <!-- Bouquet Live Visualizer Frame -->
+                    <div class="lg:col-span-7 bg-white p-8 rounded-3xl border border-blush-accent shadow-floating flex flex-col items-center justify-between min-h-[480px] relative">
+                        
+                        <!-- Visual Preview Container Header -->
+                        <div class="w-full text-center mb-4">
+                            <span id="stemCountBadge" class="inline-block px-3 py-1 rounded-full bg-blush text-dusty-rose-dark text-xs font-bold border border-blush-accent">
+                                0 tangkai dipilih
+                            </span>
+                        </div>
+
+                        <!-- Dynamic Stems Render Box -->
+                        <div id="bouquetCanvasContainer" class="relative w-full h-64 sm:h-72 flex items-end justify-center">
+                            <!-- Silk Wrap Graphic Background -->
+                            <div class="absolute bottom-0 w-44 h-36 bg-gradient-to-t from-blush-accent/80 to-blush/40 rounded-b-3xl rounded-t-lg border border-blush-accent shadow-inner z-10 flex items-center justify-center">
+                                <span class="font-script text-3xl text-dusty-rose-dark/80">Floreist</span>
+                            </div>
+
+                            <!-- Interactive Stem Render Canvas Area -->
+                            <div id="bouquetStemsDisplay" class="relative w-full h-full flex items-end justify-center pb-8 z-0">
+                                <p id="emptyBouquetPrompt" class="text-sm text-gray-400 italic mb-20 text-center">Klik bunga di sebelah kiri untuk mulai merangkai buketmu 💐</p>
+                            </div>
+                        </div>
+
+                        <!-- Poetic Story Generator Output -->
+                        <div class="w-full bg-cream p-4 rounded-2xl border border-blush-accent/60 text-center mt-6 z-20">
+                            <p class="text-xs uppercase tracking-widest text-sage-dark font-bold mb-1">Nuansa & Cerita Buketmu</p>
+                            <p id="builderPoeticMood" class="font-serif italic text-base text-gray-700">
+                                "Sebuah buket kosong yang siap diisi dengan ketulusan hatimu..."
+                            </p>
+                        </div>
+
+                        <!-- Add Bouquet to Cart Action -->
+                        <button id="addCustomBouquetCartBtn" onclick="addCustomBouquetToCart()" disabled class="w-full mt-6 py-4 rounded-full bg-dusty-rose text-white font-medium hover:bg-dusty-rose-dark disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-gift text-sm"></i>
+                            <span>Tambahkan Buket Spesial ke Keranjang ♡</span>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <section id="meanings" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center space-y-3 mb-14">
+                <span class="text-xs font-bold tracking-widest uppercase text-lavender-accent">Bahasa Bunga</span>
+                <h2 class="font-serif text-4xl sm:text-5xl font-bold text-gray-900">Setiap Bunga Memiliki Cerita.</h2>
+                <p class="text-gray-600 max-w-xl mx-auto text-sm sm:text-base font-light">
+                    Bunga mampu menyampaikan perasaan mendalam ketika kata-kata sulit diungkapkan.
+                </p>
+            </div>
+
+            <!-- Meaning Cards Grid with Images -->
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                
+                <!-- CINTA -->
+                <div class="bg-white p-5 rounded-3xl border border-blush-accent/60 shadow-soft hover:shadow-floating hover:-translate-y-1 transition-all group text-center space-y-3">
+                    <div class="w-20 h-20 mx-auto rounded-2xl overflow-hidden border border-blush-accent group-hover:scale-105 transition-transform">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNbCUIMcK6udwz_a4K3JVt75CrJhOWEgiFGvbsd7Yrig&s=10" alt="Mawar dan Tulip" class="w-full h-full object-cover">
+                    </div>
+                    <span class="inline-block px-3 py-1 rounded-full bg-blush text-dusty-rose text-[11px] font-bold uppercase tracking-wider">Cinta & Kasih</span>
+                    <h3 class="font-serif text-xl font-bold text-gray-800">Mawar + Tulip</h3>
+                    <p class="text-xs text-gray-500 font-light leading-relaxed">
+                        Ungkapan cinta abadi dan ketulusan hangat yang tidak memudar oleh waktu.
+                    </p>
+                </div>
+
+                <!-- PERSAHABATAN -->
+                <div class="bg-white p-5 rounded-3xl border border-warm-yellow shadow-soft hover:shadow-floating hover:-translate-y-1 transition-all group text-center space-y-3">
+                    <div class="w-20 h-20 mx-auto rounded-2xl overflow-hidden border border-warm-yellow group-hover:scale-105 transition-transform">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDwWrXHfypRoZzyGYMNJUx8TtsbOAzZN3xC7cJ4fG7HQ&s=10" alt="Bunga Matahari" class="w-full h-full object-cover">
+                    </div>
+                    <span class="inline-block px-3 py-1 rounded-full bg-warm-yellow text-warm-gold text-[11px] font-bold uppercase tracking-wider">Persahabatan</span>
+                    <h3 class="font-serif text-xl font-bold text-gray-800">Daisy + Matahari</h3>
+                    <p class="text-xs text-gray-500 font-light leading-relaxed">
+                        Sinar kebahagiaan dan keceriaan tulus untuk sahabat terbaik dalam hidupmu.
+                    </p>
+                </div>
+
+                <!-- AWAL BARU -->
+                <div class="bg-white p-5 rounded-3xl border border-blush-accent shadow-soft hover:shadow-floating hover:-translate-y-1 transition-all group text-center space-y-3">
+                    <div class="w-20 h-20 mx-auto rounded-2xl overflow-hidden border border-blush-accent group-hover:scale-105 transition-transform">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9tGI8YisqbpMey7Hes0DBXadMPDQ47vLM7i9CaZpDVw&s=10" alt="Cherry Blossom" class="w-full h-full object-cover">
+                    </div>
+                    <span class="inline-block px-3 py-1 rounded-full bg-blush text-dusty-rose text-[11px] font-bold uppercase tracking-wider">Awal Baru</span>
+                    <h3 class="font-serif text-xl font-bold text-gray-800">Cherry Blossom + Tulip</h3>
+                    <p class="text-xs text-gray-500 font-light leading-relaxed">
+                        Merayakan babak baru, impian segar, dan indahnya langkah yang baru dimulai.
+                    </p>
+                </div>
+
+                <!-- KETENANGAN -->
+                <div class="bg-white p-5 rounded-3xl border border-lavender-soft shadow-soft hover:shadow-floating hover:-translate-y-1 transition-all group text-center space-y-3">
+                    <div class="w-20 h-20 mx-auto rounded-2xl overflow-hidden border border-lavender-soft group-hover:scale-105 transition-transform">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjCvNnSMqo-52lXakWutMtTXNWqT5dRw0cKkgS8cSSGw&s=10" alt="Lavender" class="w-full h-full object-cover">
+                    </div>
+                    <span class="inline-block px-3 py-1 rounded-full bg-lavender-soft text-lavender-accent text-[11px] font-bold uppercase tracking-wider">Ketenangan</span>
+                    <h3 class="font-serif text-xl font-bold text-gray-800">Lavender + Baby’s Breath</h3>
+                    <p class="text-xs text-gray-500 font-light leading-relaxed">
+                        Kedamaian lembut bagi seseorang yang berhak mendapatkan hari yang rileks dan teduh.
+                    </p>
+                </div>
+
+                <!-- RASA SYUKUR -->
+                <div class="bg-white p-5 rounded-3xl border border-sage-light shadow-soft hover:shadow-floating hover:-translate-y-1 transition-all group text-center space-y-3">
+                    <div class="w-20 h-20 mx-auto rounded-2xl overflow-hidden border border-sage-light group-hover:scale-105 transition-transform">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9V5swAhFG2RfkSaktqey2cthsUvuM7KfZicFI5c4uw&s=10" alt="Peony" class="w-full h-full object-cover">
+                    </div>
+                    <span class="inline-block px-3 py-1 rounded-full bg-sage-light text-sage-dark text-[11px] font-bold uppercase tracking-wider">Rasa Syukur</span>
+                    <h3 class="font-serif text-xl font-bold text-gray-800">Peony + Matahari</h3>
+                    <p class="text-xs text-gray-500 font-light leading-relaxed">
+                        Kekaguman melimpah dan ucapan terima kasih tulus atas segala kebaikan.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="about" class="py-20 bg-blush/30 border-t border-blush-accent/30">
+            <div class="max-w-4xl mx-auto px-4 text-center space-y-6">
+                <div class="w-16 h-16 rounded-full overflow-hidden border border-blush-accent mx-auto shadow-soft">
+                    <img src="https://i.pinimg.com/originals/07/a7/36/07a7365251c655a2ae7c54b3a7e73282.jpg" alt="Floreist Philosophy" class="w-full h-full object-cover">
+                </div>
+                <span class="text-xs font-bold tracking-widest uppercase text-sage-dark">Filosifi Butik Kami</span>
+                <h2 class="font-serif text-4xl sm:text-5xl font-bold text-gray-900">Bunga, Dengan Makna Yang Lebih Dalam.</h2>
+                <p class="text-base sm:text-lg text-gray-600 font-light leading-relaxed italic max-w-2xl mx-auto">
+                    "Floreist diciptakan untuk kamu yang ingin menyampaikan perasaan tulus melalui keindahan bunga. Setiap kelopak memiliki bahasanya sendiri, dan terkadang bunga yang tepat bisa menyampaikan apa yang tak mampu diucapkan kata-kata."
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-blush-accent/50 text-gray-600 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full overflow-hidden border border-blush-accent">
+                        <img src="https://i.pinimg.com/originals/07/a7/36/07a7365251c655a2ae7c54b3a7e73282.jpg" alt="Floreist Logo" class="w-full h-full object-cover">
+                    </div>
+                    <span class="font-serif text-2xl font-bold text-gray-900">Floreist/span>
+                </div>
+                <p class="text-xs text-gray-500 italic">"Biarkan perasaanmu bermekaran."</p>
+                <p class="text-xs text-gray-400">© 2026 Floreist Boutique. Dibuat penuh cinta.</p>
+            </div>
+
+            <div>
+                <h4 class="font-serif font-bold text-gray-900 text-base mb-3">Jelajahi</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#collection" class="hover:text-dusty-rose transition-colors">Katalog Bunga</a></li>
+                    <li><a href="#builder" class="hover:text-dusty-rose transition-colors">Perangkai Buket Custom</a></li>
+                    <li><a href="#meanings" class="hover:text-dusty-rose transition-colors">Makna Puitis</a></li>
+                    <li><a href="#feelings" class="hover:text-dusty-rose transition-colors">Rekomendasi Perasaan</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-serif font-bold text-gray-900 text-base mb-3">Kunjungi Kami</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    Jalan Bunga Cantik No. 7, Tangerang<br/>
+                    Buka Setiap Hari: 09:00 - 19:00 WIB<br/>
+                    halo@floreist.com
+                </p>
+            </div>
+
+            <div>
+                <h4 class="font-serif font-bold text-gray-900 text-base mb-3">Ikuti Kami ♡</h4>
+                <div class="flex gap-3 text-lg text-dusty-rose">
+                    <a href="https://www.instagram.com/f.nnaest/?hl=en" class="w-9 h-9 rounded-full bg-blush border border-blush-accent flex items-center justify-center hover:bg-dusty-rose hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://id.pinterest.com/fl0ern/" class="w-9 h-9 rounded-full bg-blush border border-blush-accent flex items-center justify-center hover:bg-dusty-rose hover:text-white transition-colors"><i class="fa-brands fa-pinterest"></i></a>
+                    <a href="https://mail.google.com/mail/u/0/#inbox" class="w-9 h-9 rounded-full bg-blush border border-blush-accent flex items-center justify-center hover:bg-dusty-rose hover:text-white transition-colors"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="cartDrawerBackdrop" onclick="toggleCartDrawer(false)" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 transition-opacity duration-300 opacity-0 pointer-events-none"></div>
+    
+    <aside id="cartDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-white z-50 shadow-2xl transition-transform duration-300 transform translate-x-full flex flex-col">
+        <!-- Drawer Header -->
+        <div class="p-6 border-b border-blush-accent/60 flex items-center justify-between bg-blush/30">
+            <div class="flex items-center gap-2">
+                <span class="text-xl">🌸</span>
+                <h3 class="font-serif text-2xl font-bold text-gray-900">Buket Kecilmu</h3>
+            </div>
+            <button onclick="toggleCartDrawer(false)" class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-800">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Cart Items List Container -->
+        <div id="cartItemsList" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Dynamic Cart Items injected here -->
+        </div>
+
+        <!-- Empty Cart State -->
+        <div id="cartEmptyState" class="hidden flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3">
+            <div class="w-20 h-20 rounded-full overflow-hidden border border-blush-accent shadow-sm">
+                <img src="https://images.unsplash.com/photo-1520763185298-1b434c919102?auto=format&fit=crop&w=300&q=80" alt="Buket Kosong" class="w-full h-full object-cover">
+            </div>
+            <p class="font-serif text-xl font-medium text-gray-700">"Keranjangmu masih menunggu sentuhan cinta 🌷"</p>
+            <p class="text-xs text-gray-400">Jelajahi koleksi butik kami dan pilih bunga yang mewakili hatimu.</p>
+            <button onclick="toggleCartDrawer(false)" class="mt-2 px-6 py-2.5 rounded-full bg-dusty-rose text-white text-xs font-medium">Pilih Bunga Sekarang</button>
+        </div>
+
+        <!-- Drawer Footer with Total & Checkout Button -->
+        <div id="cartFooter" class="p-6 border-t border-blush-accent/60 bg-cream space-y-4">
+            <div class="space-y-1 text-sm">
+                <div class="flex justify-between text-gray-600">
+                    <span>Subtotal</span>
+                    <span id="cartSubtotal">Rp 0</span>
+                </div>
+                <div class="flex justify-between text-gray-600">
+                    <span>Pita Cantik & Kartu Ucapan</span>
+                    <span class="text-sage-dark font-medium">Gratis ♡</span>
+                </div>
+                <div class="flex justify-between text-base font-bold text-gray-900 border-t border-gray-200/80 pt-2">
+                    <span>Total Pembayaran</span>
+                    <span id="cartTotal">Rp 0</span>
+                </div>
+            </div>
+
+            <button onclick="openCheckoutModal()" class="w-full py-3.5 rounded-full bg-dusty-rose text-white font-medium hover:bg-dusty-rose-dark transition-colors shadow-md flex items-center justify-center gap-2">
+                <span>Lanjut ke Pembayaran</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Meaning Modal -->
+    <div id="meaningModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-3xl border border-blush-accent max-w-md w-full p-6 sm:p-8 relative shadow-floating transform scale-95 transition-transform duration-300" id="meaningModalCard">
+            <button onclick="closeMeaningModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-blush flex items-center justify-center text-gray-500 hover:text-gray-800">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center space-y-4">
+                <div class="w-28 h-28 mx-auto rounded-2xl overflow-hidden border border-blush-accent shadow-sm">
+                    <img id="meaningModalImg" src="" alt="Gambar Bunga Detail" class="w-full h-full object-cover">
+                </div>
+
+                <div>
+                    <span id="meaningModalMood" class="text-xs font-bold tracking-widest text-dusty-rose uppercase">Manis & Tulus</span>
+                    <h3 id="meaningModalTitle" class="font-serif text-3xl font-bold text-gray-900 mt-1">Tulip</h3>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-cream border border-blush-accent/50 space-y-2">
+                    <p class="text-xs font-bold text-sage-dark uppercase tracking-wider">Makna Utama</p>
+                    <p id="meaningModalMeaningText" class="text-sm text-gray-700 font-medium">Cinta sempurna, kasih sayang, dan kehangatan.</p>
+                </div>
+
+                <div class="italic text-sm text-gray-600 font-serif leading-relaxed px-2" id="meaningModalPoeticQuote">
+                    "Kamu bisa memberikan tulip saat ingin berkata, 'Aku mungkin tak pandai merangkai kata, tapi aku sangat peduli padamu.'"
+                </div>
+
+                <button id="meaningModalAddBtn" class="w-full py-3 rounded-full bg-dusty-rose text-white text-sm font-medium hover:bg-dusty-rose-dark transition-colors shadow-sm">
+                    Tambahkan Bunga Ini ♡
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-3xl border border-blush-accent max-w-lg w-full p-6 sm:p-8 relative shadow-floating max-h-[90vh] overflow-y-auto">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-blush flex items-center justify-center text-gray-500 hover:text-gray-800">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="space-y-6">
+                <div class="text-center">
+                    <span class="text-xs font-bold tracking-widest text-dusty-rose uppercase">Checkout Floreist</span>
+                    <h3 class="font-serif text-3xl font-bold text-gray-900">Kirim Buket Cantikmu ♡</h3>
+                </div>
+
+                <!-- Form Inputs -->
+                <form id="checkoutForm" onsubmit="handlePlaceOrder(event)" class="space-y-4 text-xs sm:text-sm">
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1">Nama Lengkap Pengirim</label>
+                        <input type="text" required placeholder="Contoh: Amanda Putri" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-dusty-rose focus:ring-1 focus:ring-dusty-rose outline-none bg-cream/40" />
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-medium text-gray-700 mb-1">Nomor WhatsApp/HP</label>
+                            <input type="tel" required placeholder="0812-3456-7890" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-dusty-rose focus:ring-1 focus:ring-dusty-rose outline-none bg-cream/40" />
+                        </div>
+                        <div>
+                            <label class="block font-medium text-gray-700 mb-1">Tanggal Pengiriman</label>
+                            <input type="date" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-dusty-rose focus:ring-1 focus:ring-dusty-rose outline-none bg-cream/40 text-gray-600" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1">Alamat Lengkap Penerima</label>
+                        <textarea required rows="2" placeholder="Alamat lengkap penerima, nomor rumah & patokan..." class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-dusty-rose focus:ring-1 focus:ring-dusty-rose outline-none bg-cream/40"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1 flex items-center justify-between">
+                            <span>Pesan Kartu Ucapan (Opsional)</span>
+                            <span class="text-[10px] text-sage-dark">Dicetak di kartu sutra</span>
+                        </label>
+                        <textarea rows="3" placeholder="Tuliskan pesan hangat yang ingin dicetak di kartu bunga..." class="w-full px-4 py-3 rounded-xl border border-blush-accent bg-blush/20 focus:border-dusty-rose focus:ring-1 focus:ring-dusty-rose outline-none font-serif italic text-gray-700"></textarea>
+                    </div>
+
+                    <!-- Order Summary Box -->
+                    <div class="p-4 rounded-2xl bg-cream border border-blush-accent/60 space-y-2">
+                        <div class="flex justify-between font-bold text-gray-800">
+                            <span>Ringkasan Pesanan</span>
+                            <span id="checkoutSummaryTotal">Rp 0</span>
+                        </div>
+                        <p id="checkoutSummaryItems" class="text-xs text-gray-500 italic">Belum ada item dipilih.</p>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 rounded-full bg-dusty-rose text-white font-medium hover:bg-dusty-rose-dark transition-all shadow-md text-base">
+                        Pesan Sekarang ♡
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-500">
+        <div class="bg-white rounded-3xl border border-blush-accent max-w-md w-full p-8 text-center space-y-6 relative shadow-2xl transform scale-90 transition-transform duration-500" id="successModalCard">
+            <div class="w-24 h-24 mx-auto rounded-full overflow-hidden border-2 border-blush-accent shadow-md animate-bounce">
+                <img src="https://images.unsplash.com/photo-1520763185298-1b434c919102?auto=format&fit=crop&w=300&q=80" alt="Pesanan Sukses" class="w-full h-full object-cover">
+            </div>
+
+            <div class="space-y-2">
+                <span class="text-xs font-bold tracking-widest text-sage-dark uppercase">Pesanan Dikonfirmasi</span>
+                <h3 class="font-serif text-3xl font-bold text-gray-900">Buket kecilmu siap bermekaran! 🌷</h3>
+                <p class="text-sm text-gray-600 font-light leading-relaxed">
+                    Terima kasih telah mempercayakan perasaanmu pada Floreist. Florist kami sedang menyiapkan rangkain bungamu dengan penuh kelembutan.
+                </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-cream border border-blush-accent/60 text-xs text-gray-500 italic">
+                "Bunga adalah penyampai pesan cinta yang paling tenang."
+            </div>
+
+            <button onclick="closeSuccessModal()" class="w-full py-3.5 rounded-full bg-dusty-rose text-white font-medium hover:bg-dusty-rose-dark transition-colors shadow-md">
+                Kembali ke Butik ♡
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        /* -------------------------------------------------------------
+           1. DATA CATALOG WITH IMAGES & INDONESIAN TRANSLATIONS
+        ------------------------------------------------------------- */
+        const FLOWERS_CATALOG = [
+            {
+                id: 'tulip',
+                name: 'Tulip',
+                image: 'https://img.lazcdn.com/g/ff/kf/S984a211ef1294ecd8865eb729b9602ccN.jpg_720x720q80.jpg',
+                meaning: 'Cinta yang sempurna, kasih sayang, dan kehangatan.',
+                mood: 'Manis & Tulus',
+                price: 220000,
+                poeticQuote: 'Kamu bisa memberikan tulip saat ingin berkata, "Aku mungkin tak pandai merangkai kata, tapi aku sangat peduli padamu."',
+                accentColor: '#FAF0EE'
+            },
+            {
+                id: 'rose',
+                name: 'Mawar',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSf71k-iNtFWB92ieEU6yd1tdPHB5-7zangLV_iqxUMLg&s=10',
+                meaning: 'Cinta sejati, apresiasi mendalam, dan kasih sayang abadi.',
+                mood: 'Romantis & Abadi',
+                price: 280000,
+                poeticQuote: 'Mawar menyampaikan pengabdian dan ketulusan yang tak tergerus oleh musim.',
+                accentColor: '#F2D3CE'
+            },
+            {
+                id: 'sunflower',
+                name: 'Bunga Matahari',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI_IAtggTNWbMxEhk0hzn8QpJ3IJQ9K1OZ1cN8qII8ag&s=10',
+                meaning: 'Kebahagiaan, keceriaan, kekaguman, dan energi positif.',
+                mood: 'Ceria & Cemerlang',
+                price: 200000,
+                poeticQuote: 'Kirimkan bunga matahari untuk berkata, "Kamu adalah sinar mentari kecil dalam hari-hariku."',
+                accentColor: '#FCF4DD'
+            },
+            {
+                id: 'cherry_blossom',
+                name: 'Cherry Blossom',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNh9_93Y56QWsBkiWgAVAK4PjwtmGjDXsuSlkR0Tu7YQ&s=10',
+                meaning: 'Awal baru yang indah dan momen berharga yang tak terlupakan.',
+                mood: 'Lembut & Penuh Kenangan',
+                price: 260000,
+                poeticQuote: 'Bisikan merah muda yang mengingatkan kita bahwa setiap detik bersama orang tersayang adalah hadiah.',
+                accentColor: '#EDE7F6'
+            },
+            {
+                id: 'lavender',
+                name: 'Lavender',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOjFvgGHq6boiCUKrL52tGzSjNBUwVzORvE-KHmxipuA&s=10',
+                meaning: 'Ketenangan jiwa, kesetiaan, dan kedamaian.',
+                mood: 'Tenang & Menenangkan',
+                price: 180000,
+                poeticQuote: 'Untuk seseorang yang berhak mendapatkan hari yang lebih teduh dan penuh kedamaian.',
+                accentColor: '#EDE7F6'
+            },
+            {
+                id: 'babys_breath',
+                name: 'Baby’s Breath',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDR-H6u9VuTQLvMRMd8tKi1T_E3xN40_-9KU18ZdM0hw&s=10',
+                meaning: 'Kemurnian hati, ketulusan cinta, dan kelembutan.',
+                mood: 'Anggun & Impian',
+                price: 160000,
+                poeticQuote: 'Bagaikan bintang-bintang kecil yang tersangkut di tangkai hijau, membawa janji-janji tulus.',
+                accentColor: '#FDFBF7'
+            },
+            {
+                id: 'peony',
+                name: 'Peony',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZIypAVHLsAFeVmDS9jltxt7dnEe0IedoahDUHUfelpg&s=10',
+                meaning: 'Keberuntungan, kemewahan cinta, dan kebahagiaan.',
+                mood: 'Mewah & Lembut',
+                price: 320000,
+                poeticQuote: 'Kelopak-kelopak rimbun yang bermekaran seperti perayaan kebahagiaan hidup yang indah.',
+                accentColor: '#F2D3CE'
+            },
+            {
+                id: 'daisy',
+                name: 'Daisy',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj0LUwG-H8drOZEdDQc0WEqXIBajx5P8WssbQz7KMCAQ&s=10',
+                meaning: 'Ketulusan, persahabatan sejati, dan keceriaan sederhana.',
+                mood: 'Manis & Ceria',
+                price: 150000,
+                poeticQuote: 'Kebahagiaan sederhana tanpa kepura-puraan yang dibungkus dalam kelopak putih segar.',
+                accentColor: '#E8EFE7'
+            }
+        ];
+
+        const EMOTIONS_LIST = [
+            { label: 'Aku mencintaimu 🌹', flowerId: 'rose', quote: 'Pengakuan cinta klasik yang abadi dan hangat.' },
+            { label: "Aku bangga padamu 🌻", flowerId: 'sunflower', quote: 'Merayakan pencapaian dan keindahan sinarmu!' },
+            { label: 'Aku rindu kamu 🌷', flowerId: 'tulip', quote: 'Berharap kamu ada di dekat sini untuk berbagi kehangatan.' },
+            { label: 'Terima kasih 🌼', flowerId: 'daisy', quote: 'Rasa syukur mendalam atas hadirmu yang berarti.' },
+            { label: 'Jaga dirimu baik-baik 💜', flowerId: 'lavender', quote: 'Pengingat lembut untuk rehat sejenak dan bernapas lega.' },
+            { label: "Awal yang baru 🌸", flowerId: 'cherry_blossom', quote: 'Semoga babak baru ini bermekaran dengan indah untukmu.' },
+            { label: 'Cepat sembuh ya 🤍', flowerId: 'babys_breath', quote: 'Mengirimkan doa kesembuhan dan kenyamanan yang lembut.' },
+            { label: 'Hanya ingin menyapa 🌺', flowerId: 'peony', quote: 'Karna hari biasa pun menjadi spesial saat diberi bunga.' }
+        ];
+
+        const MASCOT_TIPS = [
+            '"Tulip melambangkan cinta sempurna dan kehangatan yang manis!"',
+            '"Gratis cetak kartu ucapan hadiah di setiap pemesanan buket!"',
+            '"Perpaduan Lavender & Baby’s Breath memberikan nuansa buket yang sangat menenangkan ♡"',
+            '"Bunga Matahari selalu membawa senyuman untuk orang yang kamu banggakan!"',
+            '"Coba fitur Rangkai Buket untuk mengombinasikan bunga favoritmu!"'
+        ];
+
+        /* -------------------------------------------------------------
+           2. STATE MANAGEMENT & HELPER FORMATTER
+        ------------------------------------------------------------- */
+        let cart = []; // [{ id, name, price, qty, image, type: 'stem'|'bouquet' }]
+        let bouquetBuilderStems = []; // [{ id, name, price, image }]
+        let mascotTipIndex = 0;
+
+        function formatRupiah(amount) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount);
+        }
+
+        /* -------------------------------------------------------------
+           3. DOM INITIALIZATION & RENDER FUNCTIONS
+        ------------------------------------------------------------- */
+        window.onload = function() {
+            initPetalCanvas();
+            renderFlowerGrid();
+            renderEmotionChips();
+            renderBuilderPicker();
+            updateCartUI();
+        };
+
+        // Render Flower Collection Cards with Images
+        function renderFlowerGrid() {
+            const grid = document.getElementById('flowerGrid');
+            grid.innerHTML = FLOWERS_CATALOG.map(flower => `
+                <div class="bg-white rounded-3xl border border-blush-accent/60 p-5 shadow-soft hover:shadow-floating hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <!-- Card Top Photo Frame -->
+                        <div class="w-full h-48 rounded-2xl border border-blush-accent/40 overflow-hidden relative group-hover:scale-102 transition-transform duration-500">
+                            <img src="${flower.image}" alt="${flower.name}" onerror="this.src='https://placehold.co/400x400/FAF0EE/D88A8A?text=${flower.name}'" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"/>
+                            <span class="absolute top-3 right-3 text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-blush-accent text-dusty-rose shadow-sm">
+                                ${flower.mood}
+                            </span>
+                        </div>
+
+                        <!-- Card Meta -->
+                        <div class="mt-4 space-y-1">
+                            <h3 class="font-serif text-2xl font-bold text-gray-900 group-hover:text-dusty-rose transition-colors">${flower.name}</h3>
+                            <p class="text-xs text-gray-500 line-clamp-2 font-light leading-relaxed">${flower.meaning}</p>
+                        </div>
+                    </div>
+
+                    <!-- Price & Action Buttons -->
+                    <div class="mt-5 pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                        <span class="font-serif text-lg font-bold text-gray-800">${formatRupiah(flower.price)}</span>
+                        
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="openMeaningModal('${flower.id}')" class="p-2 rounded-full bg-cream hover:bg-blush text-gray-600 hover:text-dusty-rose text-xs border border-blush-accent transition-colors" title="Lihat Makna">
+                                <i class="fa-solid fa-book-open"></i>
+                            </button>
+
+                            <button onclick="addToCart('${flower.id}', event)" class="px-3.5 py-2 rounded-full bg-dusty-rose text-white text-xs font-medium hover:bg-dusty-rose-dark transition-all shadow-sm flex items-center gap-1">
+                                <span>+ Tambah</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Emotion Quiz Chips
+        function renderEmotionChips() {
+            const container = document.getElementById('emotionChips');
+            container.innerHTML = EMOTIONS_LIST.map((emo, index) => `
+                <button onclick="selectEmotion(${index})" class="px-4 py-2.5 rounded-full bg-white border border-blush-accent text-xs sm:text-sm font-medium text-gray-700 hover:border-dusty-rose hover:bg-blush transition-all shadow-sm flex items-center gap-2">
+                    <span>${emo.label}</span>
+                </button>
+            `).join('');
+        }
+
+        function selectEmotion(index) {
+            const emo = EMOTIONS_LIST[index];
+            const flower = FLOWERS_CATALOG.find(f => f.id === emo.flowerId);
+            const box = document.getElementById('emotionResultBox');
+
+            const iconImg = document.getElementById('emotionResultIcon');
+            iconImg.src = flower.image;
+            iconImg.alt = flower.name;
+
+            document.getElementById('emotionResultTag').innerText = `Ungkapan: "${emo.label}"`;
+            document.getElementById('emotionResultTitle').innerText = `${flower.name} (${flower.mood})`;
+            document.getElementById('emotionResultDesc').innerText = `"${emo.quote} — ${flower.meaning}"`;
+            document.getElementById('emotionResultPrice').innerText = formatRupiah(flower.price);
+            
+            const btn = document.getElementById('emotionAddBtn');
+            btn.onclick = (e) => addToCart(flower.id, e);
+
+            box.classList.remove('hidden');
+            box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        /* -------------------------------------------------------------
+           4. SHOPPING CART LOGIC & ANIMATIONS
+        ------------------------------------------------------------- */
+        function addToCart(flowerId, event) {
+            const flower = FLOWERS_CATALOG.find(f => f.id === flowerId);
+            if (!flower) return;
+
+            const existing = cart.find(item => item.id === flower.id && item.type === 'stem');
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({
+                    id: flower.id,
+                    name: flower.name,
+                    price: flower.price,
+                    image: flower.image,
+                    qty: 1,
+                    type: 'stem'
+                });
+            }
+
+            // Trigger flying particle animation if event source exists
+            if (event && event.clientX) {
+                triggerFlyToCartAnimation(event.clientX, event.clientY, flower.image);
+            }
+
+            showToast(`Menambahkan ${flower.name} ke buketmu ♡`);
+            updateCartUI();
+        }
+
+        function triggerFlyToCartAnimation(startX, startY, imgUrl) {
+            const cartBtn = document.getElementById('cartBtn');
+            const rect = cartBtn.getBoundingClientRect();
+            
+            const el = document.createElement('div');
+            el.className = 'particle-fly w-10 h-10 rounded-full overflow-hidden border border-blush-accent shadow-md';
+            el.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover"/>`;
+            el.style.left = `${startX}px`;
+            el.style.top = `${startY}px`;
+            document.body.appendChild(el);
+
+            const endX = rect.left + rect.width / 2;
+            const endY = rect.top + rect.height / 2;
+
+            requestAnimationFrame(() => {
+                el.style.transform = `translate(${endX - startX}px, ${endY - startY}px) scale(0.2) rotate(360deg)`;
+                el.style.opacity = '0';
+            });
+
+            setTimeout(() => {
+                el.remove();
+                cartBtn.classList.add('scale-125');
+                setTimeout(() => cartBtn.classList.remove('scale-125'), 200);
+            }, 800);
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            const badge = document.getElementById('cartBadge');
+            badge.innerText = totalItems;
+            if (totalItems > 0) {
+                badge.classList.remove('scale-0');
+            } else {
+                badge.classList.add('scale-0');
+            }
+
+            const list = document.getElementById('cartItemsList');
+            const emptyState = document.getElementById('cartEmptyState');
+            const cartFooter = document.getElementById('cartFooter');
+
+            if (cart.length === 0) {
+                list.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                cartFooter.classList.add('hidden');
+            } else {
+                list.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                cartFooter.classList.remove('hidden');
+
+                let subtotal = 0;
+                list.innerHTML = cart.map((item, index) => {
+                    const itemTotal = item.price * item.qty;
+                    subtotal += itemTotal;
+                    return `
+                        <div class="flex items-center justify-between p-3 rounded-2xl bg-cream border border-blush-accent/40">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl overflow-hidden border border-blush-accent shrink-0">
+                                    <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover"/>
+                                </div>
+                                <div>
+                                    <h4 class="font-serif font-bold text-gray-800 text-sm">${item.name}</h4>
+                                    <span class="text-xs text-dusty-rose font-medium">${formatRupiah(item.price)}</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center bg-white border border-gray-200 rounded-full px-2 py-0.5">
+                                    <button onclick="updateQty(${index}, -1)" class="text-xs text-gray-500 hover:text-dusty-rose px-1.5">-</button>
+                                    <span class="text-xs font-bold px-1.5">${item.qty}</span>
+                                    <button onclick="updateQty(${index}, 1)" class="text-xs text-gray-500 hover:text-dusty-rose px-1.5">+</button>
+                                </div>
+                                <button onclick="removeItem(${index})" class="text-xs text-gray-400 hover:text-red-400 p-1">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                document.getElementById('cartSubtotal').innerText = formatRupiah(subtotal);
+                document.getElementById('cartTotal').innerText = formatRupiah(subtotal);
+            }
+        }
+
+        function updateQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cartDrawer');
+            const backdrop = document.getElementById('cartDrawerBackdrop');
+            if (open) {
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                drawer.classList.remove('translate-x-full');
+            } else {
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+                drawer.classList.add('translate-x-full');
+            }
+        }
+
+        /* -------------------------------------------------------------
+           5. INTERACTIVE BOUQUET BUILDER WITH THUMBNAIL IMAGES
+        ------------------------------------------------------------- */
+        function renderBuilderPicker() {
+            const picker = document.getElementById('builderFlowerPicker');
+            picker.innerHTML = FLOWERS_CATALOG.map(flower => `
+                <button onclick="addStemToBuilder('${flower.id}')" class="p-2.5 rounded-2xl bg-cream hover:bg-blush border border-blush-accent/60 flex items-center gap-2 text-left transition-all hover:scale-102">
+                    <div class="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-blush-accent">
+                        <img src="${flower.image}" alt="${flower.name}" class="w-full h-full object-cover"/>
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="font-serif font-bold text-xs text-gray-800 truncate">${flower.name}</p>
+                        <p class="text-[10px] text-dusty-rose font-medium">${formatRupiah(flower.price)}</p>
+                    </div>
+                </button>
+            `).join('');
+        }
+
+        function addStemToBuilder(flowerId) {
+            const flower = FLOWERS_CATALOG.find(f => f.id === flowerId);
+            if (!flower) return;
+
+            if (bouquetBuilderStems.length >= 8) {
+                showToast("Buketmu sudah sangat rimbun dan cantik! (Maksimal 8 tangkai)");
+                return;
+            }
+
+            bouquetBuilderStems.push(flower);
+            renderBouquetVisualizer();
+        }
+
+        function renderBouquetVisualizer() {
+            const container = document.getElementById('bouquetStemsDisplay');
+            const badge = document.getElementById('stemCountBadge');
+            const priceEl = document.getElementById('builderTotalPrice');
+            const moodEl = document.getElementById('builderPoeticMood');
+            const addBtn = document.getElementById('addCustomBouquetCartBtn');
+
+            if (bouquetBuilderStems.length === 0) {
+                container.innerHTML = '<p id="emptyBouquetPrompt" class="text-sm text-gray-400 italic mb-20 text-center">Klik bunga di sebelah kiri untuk mulai merangkai buketmu 💐</p>';
+                badge.innerText = '0 tangkai dipilih';
+                priceEl.innerText = 'Rp 0';
+                moodEl.innerText = '"Sebuah buket kosong yang siap diisi dengan ketulusan hatimu..."';
+                addBtn.disabled = true;
+                return;
+            }
+
+            addBtn.disabled = false;
+            badge.innerText = `${bouquetBuilderStems.length} tangkai dirangkai`;
+
+            const totalPrice = bouquetBuilderStems.reduce((sum, f) => sum + f.price, 0);
+            priceEl.innerText = formatRupiah(totalPrice);
+
+            // Build Stem Graphics with Image Badges
+            const angles = [-35, -20, -10, 0, 10, 20, 35, -5, 15];
+            container.innerHTML = bouquetBuilderStems.map((stem, i) => {
+                const rot = angles[i % angles.length];
+                return `
+                    <div class="absolute bottom-12 transition-all duration-500 transform origin-bottom hover:scale-110 cursor-pointer" 
+                         style="transform: rotate(${rot}deg) translateY(-${(i % 3) * 14}px); z-index: ${i};"
+                         onclick="removeStemFromBuilder(${i})" title="Klik untuk menghapus tangkai ini">
+                        <div class="w-14 h-14 rounded-full border-2 border-white shadow-lg overflow-hidden bg-white">
+                            <img src="${stem.image}" alt="${stem.name}" class="w-full h-full object-cover"/>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Generate dynamic poetic vibe in Indonesian
+            const names = [...new Set(bouquetBuilderStems.map(s => s.name))];
+            if (names.includes('Mawar') && names.includes('Tulip')) {
+                moodEl.innerText = '"Buketmu terasa seperti pengakuan cinta yang lembut dan penuh kehangatan tulus."';
+            } else if (names.includes('Daisy') || names.includes('Bunga Matahari')) {
+                moodEl.innerText = '"Buket yang memancarkan energi positif, keceriaan, dan persahabatan sejati!"';
+            } else if (names.includes('Lavender')) {
+                moodEl.innerText = '"Rangkaian bunga yang menenangkan, membawa kedamaian dan kesetiaan."';
+            } else {
+                moodEl.innerText = `"Paduan cantik dari ${names.join(', ')} yang menceritakan ketulusan dari lubuk hatimu."`;
+            }
+        }
+
+        function removeStemFromBuilder(index) {
+            bouquetBuilderStems.splice(index, 1);
+            renderBouquetVisualizer();
+        }
+
+        function clearCustomBouquet() {
+            bouquetBuilderStems = [];
+            renderBouquetVisualizer();
+        }
+
+        function addCustomBouquetToCart() {
+            if (bouquetBuilderStems.length === 0) return;
+
+            const totalPrice = bouquetBuilderStems.reduce((sum, f) => sum + f.price, 0);
+
+            cart.push({
+                id: 'custom_bouquet_' + Date.now(),
+                name: 'Buket Rangkaian Personal 💐',
+                price: totalPrice,
+                image: bouquetBuilderStems[0].image,
+                qty: 1,
+                type: 'bouquet'
+            });
+
+            showToast("Berhasil menambahkan buket kreasimu ke keranjang ♡");
+            updateCartUI();
+            clearCustomBouquet();
+            toggleCartDrawer(true);
+        }
+
+        /* -------------------------------------------------------------
+           6. MEANING MODAL & MASCOT INTERACTION
+        ------------------------------------------------------------- */
+        function openMeaningModal(flowerId) {
+            const flower = FLOWERS_CATALOG.find(f => f.id === flowerId);
+            if (!flower) return;
+
+            const imgEl = document.getElementById('meaningModalImg');
+            imgEl.src = flower.image;
+            imgEl.alt = flower.name;
+
+            document.getElementById('meaningModalMood').innerText = flower.mood;
+            document.getElementById('meaningModalTitle').innerText = flower.name;
+            document.getElementById('meaningModalMeaningText').innerText = flower.meaning;
+            document.getElementById('meaningModalPoeticQuote').innerText = `"${flower.poeticQuote}"`;
+
+            const addBtn = document.getElementById('meaningModalAddBtn');
+            addBtn.onclick = (e) => {
+                addToCart(flower.id, e);
+                closeMeaningModal();
+            };
+
+            const modal = document.getElementById('meaningModal');
+            const card = document.getElementById('meaningModalCard');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        }
+
+        function closeMeaningModal() {
+            const modal = document.getElementById('meaningModal');
+            const card = document.getElementById('meaningModalCard');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+        }
+
+        function triggerMascotDialogue() {
+            mascotTipIndex = (mascotTipIndex + 1) % MASCOT_TIPS.length;
+            const msgEl = document.getElementById('mascotMessage');
+            msgEl.innerText = MASCOT_TIPS[mascotTipIndex];
+        }
+
+        /* -------------------------------------------------------------
+           7. CHECKOUT & SUCCESS MODAL
+        ------------------------------------------------------------- */
+        function openCheckoutModal() {
+            toggleCartDrawer(false);
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            document.getElementById('checkoutSummaryTotal').innerText = formatRupiah(total);
+            document.getElementById('checkoutSummaryItems').innerText = cart.map(i => `${i.qty}x ${i.name}`).join(', ');
+
+            const modal = document.getElementById('checkoutModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkoutModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function handlePlaceOrder(e) {
+            e.preventDefault();
+            closeCheckoutModal();
+            
+            // Clear cart
+            cart = [];
+            updateCartUI();
+
+            // Trigger floating petal burst
+            triggerPetalExplosion();
+
+            // Show Success Modal
+            const successModal = document.getElementById('successModal');
+            const successCard = document.getElementById('successModalCard');
+            successModal.classList.remove('opacity-0', 'pointer-events-none');
+            successCard.classList.remove('scale-90');
+            successCard.classList.add('scale-100');
+        }
+
+        function closeSuccessModal() {
+            const successModal = document.getElementById('successModal');
+            const successCard = document.getElementById('successModalCard');
+            successModal.classList.add('opacity-0', 'pointer-events-none');
+            successCard.classList.remove('scale-100');
+            successCard.classList.add('scale-90');
+        }
+
+        function triggerPetalExplosion() {
+            for (let i = 0; i < 30; i++) {
+                const petal = document.createElement('div');
+                petal.innerText = ['🌸', '🌷', '🌹', '✨', '🍃'][Math.floor(Math.random() * 5)];
+                petal.className = 'fixed pointer-events-none z-50 text-2xl transition-all duration-1000';
+                petal.style.left = `${Math.random() * 100}vw`;
+                petal.style.top = '-50px';
+                document.body.appendChild(petal);
+
+                setTimeout(() => {
+                    petal.style.transform = `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 720}deg)`;
+                    petal.style.opacity = '0';
+                }, 100);
+
+                setTimeout(() => petal.remove(), 2500);
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('-translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('-translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function toggleMobileNav() {
+            const nav = document.getElementById('mobileNav');
+            nav.classList.toggle('hidden');
+            nav.classList.toggle('flex');
+        }
+
+        /* -------------------------------------------------------------
+           8. CANVAS BACKGROUND PETAL PARTICLES
+        ------------------------------------------------------------- */
+        function initPetalCanvas() {
+            const canvas = document.getElementById('petalCanvas');
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const petals = Array.from({ length: 22 }).map(() => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 8 + 6,
+                speedY: Math.random() * 0.8 + 0.3,
+                speedX: Math.sin(Math.random() * Math.PI) * 0.4,
+                rotation: Math.random() * 360,
+                rotSpeed: Math.random() * 1 - 0.5,
+                color: ['#F2D3CE', '#EDE7F6', '#FAF0EE', '#E8EFE7'][Math.floor(Math.random() * 4)]
+            }));
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                petals.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += Math.sin(p.y * 0.01) * 0.5;
+                    p.rotation += p.rotSpeed;
+
+                    if (p.y > canvas.height + 20) {
+                        p.y = -20;
+                        p.x = Math.random() * canvas.width;
+                    }
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, p.size, p.size / 2, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
+</body>
+</html>
